@@ -8,21 +8,29 @@ MODEL = joblib.load(ROOT / "app" / "models" / "lgbm.pkl")
 
 router = APIRouter(prefix="/predict", tags=["predict"])
 
-@router.post("/")
+@router.post("/predict")
 async def predict_gesture(file: UploadFile = File(...)):
-    if file.content_type not in ("image/jpeg", "image/png"):
-        raise HTTPException(400, "File must be an image (JPEG/PNG)")
+    try:
+        if file.content_type not in ("image/jpeg", "image/png"):
+            raise HTTPException(400, "File must be an image (JPEG/PNG)")
 
-    # Decode bytes → BGR image
-    img_bytes = await file.read()
-    img = cv2.imdecode(np.frombuffer(img_bytes, np.uint8), cv2.IMREAD_COLOR)
-    if img is None:
-        raise HTTPException(400, "Could not decode image")
+        img_bytes = await file.read()
+        img = cv2.imdecode(np.frombuffer(img_bytes, np.uint8), cv2.IMREAD_COLOR)
+        if img is None:
+            raise HTTPException(400, "Could not decode image")
 
-    # Extract landmarks & normalize exactly like training
-    feats = extract_landmarks(img)
-    if feats is None:
-        raise HTTPException(422, "No hand detected – please try again")
+        print("[INFO] Image shape:", img.shape)
 
-    pred = MODEL.predict([feats])[0]
-    return JSONResponse({"class": str(pred)})
+        feats = extract_landmarks(img)
+        if feats is None:
+            raise HTTPException(422, "No hand detected – please try again")
+
+        print("[INFO] Feature vector:", feats.shape)
+
+        pred = MODEL.predict([feats])[0]
+        return JSONResponse({"class": str(pred)})
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(500, f"Internal Server Error: {e}")
