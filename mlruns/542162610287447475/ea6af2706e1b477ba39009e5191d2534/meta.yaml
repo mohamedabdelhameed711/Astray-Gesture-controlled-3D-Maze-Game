@@ -1,0 +1,15 @@
+artifact_uri: file:///D:/iti/MLOps/project/MLOPs-Final-Project/mlruns/542162610287447475/ea6af2706e1b477ba39009e5191d2534/artifacts
+end_time: 1748345416935
+entry_point_name: ''
+experiment_id: '542162610287447475'
+lifecycle_stage: active
+run_id: ea6af2706e1b477ba39009e5191d2534
+run_name: lgbm
+run_uuid: ea6af2706e1b477ba39009e5191d2534
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1748345379985
+status: 3
+tags: []
+user_id: moham

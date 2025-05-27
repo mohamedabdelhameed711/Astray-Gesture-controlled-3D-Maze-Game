@@ -1,0 +1,15 @@
+artifact_uri: file:///D:/iti/MLOps/project/MLOPs-Final-Project/mlruns/542162610287447475/7dcd24fc174c43bf9f78d023f1985e75/artifacts
+end_time: 1748345379430
+entry_point_name: ''
+experiment_id: '542162610287447475'
+lifecycle_stage: active
+run_id: 7dcd24fc174c43bf9f78d023f1985e75
+run_name: rf
+run_uuid: 7dcd24fc174c43bf9f78d023f1985e75
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1748345362795
+status: 3
+tags: []
+user_id: moham
