@@ -1,1 +1,1 @@
-# Maze-gesture-research
+# Maze-gesture-api
