@@ -21,8 +21,6 @@ services:
     image: grafana/grafana:latest
     container_name: grafana
     volumes:
-      - ./grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
-      - ./grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
-      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana:/etc/grafana/provisioning
     ports:
       - "3000:3000"
