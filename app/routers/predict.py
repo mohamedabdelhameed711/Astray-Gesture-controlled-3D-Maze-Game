@@ -23,7 +23,7 @@ async def predict_gesture(file: UploadFile = File(...)):
 
         feats = extract_landmarks(img)
         if feats is None:
-            raise HTTPException(422, "No hand detected – please try again")
+            raise HTTPException(status_code=422, detail="No hand detected – please try again")
 
         print("[INFO] Feature vector:", feats.shape)
 
