@@ -8,7 +8,8 @@ def test_predict_route_no_hand():
     dummy = np.zeros((64, 64, 3), dtype=np.uint8)
     _, buf = cv2.imencode(".jpg", dummy)
     resp = client.post("/predict/predict", files={"file": ("x.jpg", buf.tobytes(), "image/jpeg")})
-    print("Response content:", resp.content)  # debug output
+    print("Response status:", resp.status_code)
+    print("Response content:", resp.text)
     assert resp.status_code == 422
 
 # def test_predict_route_valid_hand():
