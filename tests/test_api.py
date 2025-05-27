@@ -12,8 +12,8 @@ def test_predict_route_no_hand():
     print("Response content:", resp.text)
     assert resp.status_code == 422
 
-# def test_predict_route_valid_hand():
-#     # Load a real image file with a hand or mock the detection logic
-#     with open("tests/sample_hand.jpg", "rb") as f:
-#         resp = client.post("/predict/predict", files={"file": ("hand.jpg", f, "image/jpeg")})
-#     assert resp.status_code == 200
+def test_predict_route_valid_hand():
+    # Load a real image file with a hand or mock the detection logic
+    with open("tests/sample_hand.jpg", "rb") as f:
+        resp = client.post("/predict/predict", files={"file": ("hand.jpg", f, "image/jpeg")})
+    assert resp.status_code == 200
