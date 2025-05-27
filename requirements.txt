@@ -10,4 +10,3 @@ pytest
 httpx
 scikit-learn>=1.0
 lightgbm
-
