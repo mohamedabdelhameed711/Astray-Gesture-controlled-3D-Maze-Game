@@ -1,6 +1,8 @@
 fastapi
-uvicorn[standard]
+uvicorn
 prometheus_fastapi_instrumentator
-opencv-python-headless
-numpy
+python-multipart
+opencv-python
 joblib
+numpy
+mediapipe
