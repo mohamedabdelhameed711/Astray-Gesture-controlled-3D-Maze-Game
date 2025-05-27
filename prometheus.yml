@@ -1,6 +1,7 @@
 global:
   scrape_interval: 5s
+
 scrape_configs:
-  - job_name: "maze-gesture-api"
+  - job_name: "maze_api"
     static_configs:
       - targets: ["api:8000"]
