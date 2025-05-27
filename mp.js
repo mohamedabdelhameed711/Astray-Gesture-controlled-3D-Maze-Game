@@ -23,12 +23,21 @@ async function onResults(results) {
         color: "#FF0000",
         lineWidth: 2,
       });
-      const arrow = await getPredictedLabel(landmarks);
-      if (arrow) {
-        triggerArrowKey("keydown", arrow);
-        setTimeout(() => {
-          triggerArrowKey("keyup", arrow);
-        }, 100);
+      
+      // Convert landmarks to tensor
+      const tensor = tf.tensor(landmarks);
+      try {
+        const arrow = await getPredictedLabel(tensor);
+        if (arrow) {
+          triggerArrowKey("keydown", arrow);
+          setTimeout(() => {
+            triggerArrowKey("keyup", arrow);
+          }, 100);
+        }
+      } catch (error) {
+        console.error("Error processing hand landmarks:", error);
+      } finally {
+        tf.dispose(tensor);
       }
     }
   }
