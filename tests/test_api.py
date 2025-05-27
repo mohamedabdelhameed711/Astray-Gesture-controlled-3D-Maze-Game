@@ -7,6 +7,6 @@ client = TestClient(app)
 def test_predict_route():
     dummy = np.zeros((64, 64, 3), dtype=np.uint8)
     _, buf = cv2.imencode(".jpg", dummy)
-    resp = client.post("/predict/", files={"file": ("x.jpg", buf.tobytes(), "image/jpeg")})
+    resp = client.post("/predict/predict", files={"file": ("x.jpg", buf.tobytes(), "image/jpeg")})
     assert resp.status_code == 200
     assert "class" in resp.json()
