@@ -6,3 +6,5 @@ opencv-python
 joblib
 numpy
 mediapipe
+pytest
+httpx
