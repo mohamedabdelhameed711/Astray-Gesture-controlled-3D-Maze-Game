@@ -141,9 +141,9 @@ The project includes a complete ML monitoring stack for model selection and perf
    - 🌐 Access at: http://localhost:3000
    - 🔑 Default credentials: admin/admin
 
-   <img src="./assets/RD.png" alt="Maze Demo" width="500"/>
-   <img src="./assets/RC.png" alt="Maze Demo" width="500"/>
-   <img src="./assets/RDA.png" alt="Maze Demo" width="500"/>
+<img src="./assets/RD.png" alt="Maze Demo" width="500"/>
+<img src="./assets/RC.png" alt="Maze Demo" width="500"/>
+<img src="./assets/RDA.png" alt="Maze Demo" width="500"/>
 
 
 
