@@ -126,6 +126,11 @@ The project includes a complete ML monitoring stack for model selection and perf
    - 📁 Model artifacts storage
    - 🌐 Access at: http://localhost:5000
 
+<img src="./assets/models.png" alt="Maze Demo" width="500"/>
+<img src="./assets/lgbm.png" alt="Maze Demo" width="500"/>
+<img src="./assets/rf.png" alt="Maze Demo" width="500"/>
+<img src="./assets/svm.png" alt="Maze Demo" width="500"/>
+
 3. **Prometheus** 📊
    - 📈 Real-time model performance metrics
    - ⏱️ Inference latency tracking
