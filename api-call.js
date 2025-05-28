@@ -1,14 +1,14 @@
-import * as tf from "@tensorflow/tfjs"; // Ensure tf is loaded
+import * as tf from "@tensorflow/tfjs";
 
 // ✅ Replace with your actual FastAPI backend URL
 const API_URL = "http://localhost:8000/predict/predict";
 
 // ✅ Gesture class → maze direction map
 const GESTURE_TO_DIRECTION = {
-  one: "up",
-  fist: "down",
-  two: "left",
-  three: "right"
+  "one": "up",
+  "fist": "down", 
+  "two": "left",
+  "three": "right"
 };
 
 // ⏱️ Throttle control
@@ -30,11 +30,7 @@ export async function maybePredictGesture(processed_t) {
   const direction = await getPredictedLabel(processed_t);
   if (direction) {
     console.log("🧭 Move:", direction);
-    // Trigger the corresponding arrow key event
-    triggerArrowKey("keydown", direction);
-    setTimeout(() => {
-      triggerArrowKey("keyup", direction);
-    }, 100);
+    // 👉 Optional: Trigger maze movement here
   }
 }
 
@@ -45,33 +41,124 @@ export async function maybePredictGesture(processed_t) {
  */
 export async function getPredictedLabel(processed_t) {
   try {
-    // Convert tensor to array
-    const landmarksArray = await processed_t.array();
+    // ✅ Get tensor dimensions
+    const [height, width] = processed_t.shape;
     
-    // Send landmarks to backend
-    const resp = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ landmarks: landmarksArray })
+    // Create a canvas to convert tensor to image
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    
+    // Convert tensor to pixels on canvas
+    await tf.browser.toPixels(processed_t, canvas);
+
+    // 📸 Convert canvas → JPEG blob
+    const blob = await new Promise((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (blob) {
+          resolve(blob);
+        } else {
+          reject(new Error("Failed to create blob from canvas"));
+        }
+      }, "image/jpeg", 0.8);
     });
 
-    if (!resp.ok) {
-      console.warn("⚠️ API Error:", await resp.text());
+    // 📤 Build FormData payload
+    const formData = new FormData();
+    formData.append("file", blob, "gesture_frame.jpg");
+
+    // 🚀 Send to FastAPI with proper error handling
+    const response = await fetch(API_URL, {
+      method: "POST",
+      body: formData,
+      // Don't set Content-Type header - let browser set it with boundary for FormData
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.warn("⚠️ API Error:", response.status, errorText);
       return null;
     }
 
-    const { class: rawGesture } = await resp.json();
-    console.log("🎯 Backend prediction:", rawGesture);
+    const result = await response.json();
+    console.log("🎯 Backend prediction:", result);
 
-    return GESTURE_TO_DIRECTION[rawGesture] ?? null;
+    // Extract the predicted class
+    const rawGesture = result.class;
+    if (!rawGesture) {
+      console.warn("⚠️ No class in response:", result);
+      return null;
+    }
 
-  } catch (err) {
-    console.error("❌ getPredictedLabel() error:", err);
+    // Map gesture to direction
+    const direction = GESTURE_TO_DIRECTION[rawGesture.toLowerCase()];
+    if (direction) {
+      console.log("✅ Mapped gesture to direction:", rawGesture, "→", direction);
+      return direction;
+    } else {
+      console.log("ℹ️ Unknown gesture:", rawGesture);
+      return null;
+    }
+
+  } catch (error) {
+    console.error("❌ getPredictedLabel() error:", error);
     return null;
-
   } finally {
-    tf.dispose(processed_t); // ✅ Always clean up
+    // ✅ Always clean up tensor
+    tf.dispose(processed_t);
+  }
+}
+
+/**
+ * 🎯 Alternative function that takes ImageData directly
+ * @param {ImageData} imageData - Raw image data from canvas
+ * @returns {"up" | "down" | "left" | "right" | null}
+ */
+export async function getPredictedLabelFromImageData(imageData) {
+  try {
+    // Create canvas from ImageData
+    const canvas = document.createElement("canvas");
+    canvas.width = imageData.width;
+    canvas.height = imageData.height;
+    const ctx = canvas.getContext("2d");
+    ctx.putImageData(imageData, 0, 0);
+
+    // Convert to blob
+    const blob = await new Promise((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (blob) {
+          resolve(blob);
+        } else {
+          reject(new Error("Failed to create blob from ImageData"));
+        }
+      }, "image/jpeg", 0.8);
+    });
+
+    // Send to API
+    const formData = new FormData();
+    formData.append("file", blob, "gesture_frame.jpg");
+
+    const response = await fetch(API_URL, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      console.warn("⚠️ API Error:", response.status, await response.text());
+      return null;
+    }
+
+    const result = await response.json();
+    const direction = GESTURE_TO_DIRECTION[result.class?.toLowerCase()];
+    
+    if (direction) {
+      console.log("✅ Gesture direction:", direction);
+    }
+    
+    return direction || null;
+
+  } catch (error) {
+    console.error("❌ getPredictedLabelFromImageData() error:", error);
+    return null;
   }
 }
